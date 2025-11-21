@@ -41,6 +41,7 @@ nav > ul {
 nav > ul > li > a {
 	text-decoration: none;
 	font-weight: bold;
+	color: #7287fd;
 }
 
 /* HLJS */
@@ -182,3 +183,31 @@ code .hljs-deletion {
 	color: #d20f39;
 	background: rgba(210, 15, 57, 0.15);
 }
+
+/* Blog List */
+.blog-list {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+.blog-entry a {
+	text-decoration: none;
+	color: inherit;
+}
+
+.blog-entry h2 {
+	margin-bottom: 0.25rem;
+	color: #7287fd;
+}
+
+.blog-entry h2:hover {
+	text-decoration: underline;
+}
+
+.blog-entry .metadata {
+	font-size: 0.9rem;
+	color: #6c6f85;
+}
+

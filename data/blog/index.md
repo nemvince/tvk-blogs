@@ -1,5 +1,9 @@
-.title: Blog Index
-.slug: blog
-# tvk.lol
+---
+title: Test Post
+slug: test-post
+date: 2024-06-15
+updated: 2024-06-19
+---
+# Test Post
 
-I'm Vince, and this is my personal little web project, which serves you ZERO JavaScript by default. And no, you can't enable it.
+This is a test blog post to verify the new layout and components.
