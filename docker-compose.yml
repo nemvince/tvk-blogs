@@ -1,0 +1,10 @@
+services:
+  blog:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - WEBHOOK_SECRET=changeme
+      - GIT_REPO_URL=https://github.com/example/blog-content.git
+    volumes:
+      - ./data:/app/data
