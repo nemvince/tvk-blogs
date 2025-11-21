@@ -13,6 +13,7 @@ export type MarkdownPage = {
 	slug?: string;
 	description?: string;
 	draft?: boolean;
+	tags?: string[];
 };
 
 export const marked = new Marked(
@@ -32,7 +33,8 @@ const parseDate = (
 	field: string,
 ): Date => {
 	if (!dateValue) {
-		console.warn(`No ${field} found in metadata for ${fileName}, using epoch`);
+		if (field !== "updated")
+            console.warn(`No ${field} found in metadata for ${fileName}, using epoch`);
 		return new Date(0);
 	}
 	if (dateValue instanceof Date) {
@@ -67,7 +69,7 @@ export const getMarkdownPage = async (
 	const fileContent = await fs.readFile(filePath, "utf-8");
 	const { data, content } = matter(fileContent);
 
-	return {
+    const page = {
 		slug: fileName.split("/").pop(),
 		title: data.title || "Untitled",
 		content,
@@ -75,7 +77,10 @@ export const getMarkdownPage = async (
 		updated: parseDate(data.updated, fileName, "updated"),
 		description: data.description,
 		draft: data.draft,
+		tags: data.tags,
 	};
+
+	return page 
 };
 
 export const listBlogPages = async () => {
@@ -90,4 +95,26 @@ export const listBlogPages = async () => {
 	return pages
 		.filter((page) => !page.draft)
 		.sort((a, b) => b.date.getTime() - a.date.getTime());
+};
+
+export const getPostsByTag = async (tag: string) => {
+	const allPosts = await listBlogPages();
+	return allPosts.filter((post) => post.tags?.includes(tag));
+};
+
+export const getRelatedPosts = async (currentSlug: string, tags: string[] = []) => {
+	if (tags.length === 0) return [];
+	
+	const allPosts = await listBlogPages();
+	
+	return allPosts
+		.filter((post) => post.slug !== currentSlug && !post.draft)
+		.map((post) => ({
+			post,
+			overlap: post.tags?.filter((tag) => tags.includes(tag)).length || 0,
+		}))
+		.filter((item) => item.overlap > 0)
+		.sort((a, b) => b.overlap - a.overlap)
+		.slice(0, 3)
+		.map((item) => item.post);
 };

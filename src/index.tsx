@@ -4,7 +4,7 @@ import { HTTPException } from "hono/http-exception";
 import { jsxRenderer } from "hono/jsx-renderer";
 import { ErrorPage } from "./components/ErrorPage";
 import { Layout } from "./components/Layout";
-import { blogListHandler, blogPostHandler } from "./routes/blog";
+import { blogListHandler, blogPostHandler, tagListHandler } from "./routes/blog";
 import { homeHandler } from "./routes/home";
 import { webhookHandler } from "./routes/webhook";
 
@@ -78,5 +78,6 @@ app.get(
 app.get("/", homeHandler);
 app.get("/blog", blogListHandler);
 app.get("/blog/:slug", blogPostHandler);
+app.get("/tags/:tag", tagListHandler);
 
 export default app;

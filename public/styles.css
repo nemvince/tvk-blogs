@@ -44,6 +44,10 @@ nav > ul > li > a {
 	color: #7287fd;
 }
 
+h1 {
+	font-size: 2.5rem;
+}
+
 /* HLJS */
 code .hljs-keyword {
 	color: #8839ef;
@@ -209,4 +213,44 @@ code .hljs-deletion {
 .blog-entry .metadata {
 	font-size: 0.9rem;
 	color: #6c6f85;
+}
+
+/* Tags */
+.tags-section {
+	margin-top: 2rem;
+	padding-top: 1rem;
+	border-top: 1px solid #ccd0da;
+}
+
+.tags {
+	display: flex;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+	margin-top: 0.5rem;
+}
+
+.tag {
+	background-color: #e6e9ef;
+	color: #4c4f69;
+	padding: 0.25rem 0.5rem;
+	border-radius: 4px;
+	text-decoration: none;
+	font-size: 0.9rem;
+	transition: background-color 0.2s;
+}
+
+.tag:hover {
+	background-color: #dce0e8;
+}
+
+/* Related Posts */
+.related-posts {
+	margin-top: 2rem;
+	padding-top: 1rem;
+	border-top: 1px solid #ccd0da;
+}
+
+.related-posts ul {
+	margin-top: 0.5rem;
+	padding-left: 1.5rem;
 }
