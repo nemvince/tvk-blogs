@@ -42,6 +42,9 @@ export const Layout: FC<PropsWithChildren<LayoutProps>> = ({
 					<nav>
 						<ul>
 							<li>
+								<span>tvk.lol</span>
+							</li>
+							<li>
 								<a href="/">Home</a>
 							</li>
 							<li>

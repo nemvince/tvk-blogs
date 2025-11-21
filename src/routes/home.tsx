@@ -7,7 +7,7 @@ export const homeHandler = async (c: Context) => {
 		__html: await marked.parse(page.content),
 	};
 
-	return c.render(<article><main dangerouslySetInnerHTML={innerHTML}></main></article>, {
+	return c.render(<main><article dangerouslySetInnerHTML={innerHTML}></article></main>, {
 		title: page.title,
 		description: page.description,
 	});
