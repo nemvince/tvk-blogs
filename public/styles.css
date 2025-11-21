@@ -48,6 +48,12 @@ h1 {
 	font-size: 2.5rem;
 }
 
+article > p:not(:last-child),
+article > pre,
+article > blockquote {
+	margin-bottom: 2rem;
+}
+
 /* HLJS */
 code .hljs-keyword {
 	color: #8839ef;
