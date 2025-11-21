@@ -7,6 +7,16 @@ import { Layout } from "./components/Layout";
 import { blogListHandler, blogPostHandler, tagListHandler } from "./routes/blog";
 import { homeHandler } from "./routes/home";
 import { webhookHandler } from "./routes/webhook";
+import { syncContent } from "./lib/sync";
+
+// Sync content on startup
+try {
+	console.log("Syncing content...");
+	await syncContent();
+	console.log("Content synced successfully.");
+} catch (e) {
+	console.error("Failed to sync content on startup:", e);
+}
 
 const app = new Hono();
 
