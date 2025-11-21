@@ -80,4 +80,9 @@ app.get("/blog", blogListHandler);
 app.get("/blog/:slug", blogPostHandler);
 app.get("/tags/:tag", tagListHandler);
 
-export default app;
+Bun.serve({
+	port: 3000,
+	fetch: app.fetch,
+})
+
+console.info("Server is running on http://localhost:3000");
