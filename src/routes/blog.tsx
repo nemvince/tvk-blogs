@@ -6,7 +6,6 @@ export const blogListHandler = async (c: Context) => {
 
 	return c.render(
 		<main>
-			<title>Blog Posts | tvk.lol</title>
 			<h1>Blog Posts</h1>
 			<div class="blog-list">
 				{blogList.map((blog) => (
@@ -43,6 +42,10 @@ export const blogListHandler = async (c: Context) => {
 			</div>
 			{blogList.length === 0 && <p>No blog posts available.</p>}
 		</main>,
+		{
+			title: "Blog Posts | tvk.lol",
+			description: "Read my latest blog posts.",
+		},
 	);
 };
 
@@ -56,5 +59,10 @@ export const blogPostHandler = async (c: Context) => {
 		<main>
 			<article dangerouslySetInnerHTML={innerHTML}></article>
 		</main>,
+		{
+			title: page.title,
+			description: page.description,
+			type: "article",
+		},
 	);
 };

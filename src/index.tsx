@@ -21,6 +21,9 @@ app.onError((e, c) => {
 					status={404}
 					message={e.message ?? "The requested resource was not found."}
 				/>,
+				{
+					title: "404 - Not Found",
+				},
 			);
 		}
 	}
@@ -31,6 +34,9 @@ app.onError((e, c) => {
 			status={500}
 			message={e.message ?? "An unexpected error occurred."}
 		/>,
+		{
+			title: "500 - Internal Server Error",
+		},
 	);
 });
 
@@ -38,10 +44,34 @@ app.post("/webhook", webhookHandler);
 
 app.use("/public/*", serveStatic({ root: "./" }));
 
+declare module "hono" {
+	interface ContextRenderer {
+		// biome-ignore lint/style/useShorthandFunctionType: type declaration merging
+		(
+			content: string | Promise<string>,
+			props: {
+				title: string;
+				description?: string;
+				image?: string;
+				type?: "website" | "article";
+			},
+		): Response;
+	}
+}
+
 app.get(
 	"/*",
-	jsxRenderer(({ children }) => {
-		return <Layout>{children}</Layout>;
+	jsxRenderer(({ children, title, description, image, type }) => {
+		return (
+			<Layout
+				title={title as string}
+				description={description as string}
+				image={image as string}
+				type={type as "website" | "article"}
+			>
+				{children}
+			</Layout>
+		);
 	}),
 );
 

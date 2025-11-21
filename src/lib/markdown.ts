@@ -1,9 +1,9 @@
 import fs from "node:fs/promises";
+import matter from "gray-matter";
 import hljs from "highlight.js";
 import { HTTPException } from "hono/http-exception";
 import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
-import matter from "gray-matter";
 
 export type MarkdownPage = {
 	title: string;
@@ -11,6 +11,8 @@ export type MarkdownPage = {
 	updated: Date;
 	content: string;
 	slug?: string;
+	description?: string;
+	draft?: boolean;
 };
 
 export const marked = new Marked(
@@ -71,6 +73,8 @@ export const getMarkdownPage = async (
 		content,
 		date: parseDate(data.date, fileName, "date"),
 		updated: parseDate(data.updated, fileName, "updated"),
+		description: data.description,
+		draft: data.draft,
 	};
 };
 
@@ -82,6 +86,8 @@ export const listBlogPages = async () => {
 			.map((file) => getMarkdownPage(`blog/${file.slice(0, -3)}`)),
 	);
 
-	// Sort by date descending by default
-	return pages.sort((a, b) => b.date.getTime() - a.date.getTime());
+	// Filter out drafts and sort by date descending
+	return pages
+		.filter((page) => !page.draft)
+		.sort((a, b) => b.date.getTime() - a.date.getTime());
 };
