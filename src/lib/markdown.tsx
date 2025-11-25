@@ -87,9 +87,7 @@ export const getMarkdownPage = async (
 	return page;
 };
 
-export const getBlogPage = async (
-	slug: string,
-): Promise<BlogPage> => {
+export const getBlogPage = async (slug: string): Promise<BlogPage> => {
 	const page = await getMarkdownPage(`blog/${slug}`);
 	return page as BlogPage;
 };
@@ -99,9 +97,7 @@ export const listBlogPages = async (): Promise<BlogPage[]> => {
 	const pages = await Promise.all(
 		files
 			.filter((file: string) => file.endsWith(".md"))
-			.map((file: string) =>
-				getBlogPage(file.slice(0, -3)),
-			),
+			.map((file: string) => getBlogPage(file.slice(0, -3))),
 	);
 
 	// Filter out drafts and sort by date descending
