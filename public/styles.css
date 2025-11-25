@@ -54,14 +54,6 @@ article > blockquote {
 	margin-bottom: 2rem;
 }
 
-p > img {
-	display: block;
-	margin: 1rem auto;
-	/* must be as wide as parent container */
-	max-width: 100%;
-	height: auto;
-}
-
 /* HLJS */
 code .hljs-keyword {
 	color: #8839ef;
@@ -362,11 +354,13 @@ tr:nth-child(even) {
 	transform-origin: center;
 }
 
-article img {
+img {
 	cursor: zoom-in;
 	transition: opacity 0.2s;
+	max-width: 100%;
+	margin: 1rem auto;
 }
 
-article img:hover {
+img:hover {
 	opacity: 0.9;
 }

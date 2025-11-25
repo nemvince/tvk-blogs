@@ -1,4 +1,5 @@
 import type { Context } from "hono";
+import { ErrorBoundary, Suspense } from "hono/jsx";
 import {
 	getBlogPage,
 	getPostsByTag,
@@ -7,11 +8,11 @@ import {
 	marked,
 } from "../lib/markdown";
 
-export const blogListHandler = async (c: Context) => {
+const BlogList = async () => {
 	const blogList = await listBlogPages();
 
-	return c.render(
-		<main>
+	return (
+		<>
 			<h1>Blog Posts</h1>
 			<div class="blog-list">
 				{blogList.map((blog) => (
@@ -47,6 +48,18 @@ export const blogListHandler = async (c: Context) => {
 				))}
 			</div>
 			{blogList.length === 0 && <p>No blog posts available.</p>}
+		</>
+	);
+};
+
+export const blogListHandler = async (c: Context) => {
+	return c.render(
+		<main>
+			<ErrorBoundary fallback={<div>Error loading blog posts.</div>}>
+				<Suspense fallback={<div>Loading blog posts...</div>}>
+					<BlogList />
+				</Suspense>
+			</ErrorBoundary>
 		</main>,
 		{
 			title: "Blog Posts | tvk.lol",
@@ -55,15 +68,14 @@ export const blogListHandler = async (c: Context) => {
 	);
 };
 
-export const blogPostHandler = async (c: Context) => {
-	const slug = c.req.param("slug");
+const BlogPostContent = async ({ slug }: { slug: string }) => {
 	const page = await getBlogPage(slug);
 	const relatedPosts = await getRelatedPosts(slug, page.tags);
 
 	const innerHTML = { __html: await marked.parse(page.content) };
 
-	return c.render(
-		<main>
+	return (
+		<>
 			<article dangerouslySetInnerHTML={innerHTML}></article>
 			{page.tags && page.tags.length > 0 && (
 				<div class="tags-section">
@@ -89,6 +101,21 @@ export const blogPostHandler = async (c: Context) => {
 					</ul>
 				</div>
 			)}
+		</>
+	);
+};
+
+export const blogPostHandler = async (c: Context) => {
+	const slug = c.req.param("slug");
+	const page = await getBlogPage(slug);
+
+	return c.render(
+		<main>
+			<ErrorBoundary fallback={<div>Error loading post.</div>}>
+				<Suspense fallback={<div>Loading post...</div>}>
+					<BlogPostContent slug={slug} />
+				</Suspense>
+			</ErrorBoundary>
 		</main>,
 		{
 			title: page.title,
@@ -98,12 +125,11 @@ export const blogPostHandler = async (c: Context) => {
 	);
 };
 
-export const tagListHandler = async (c: Context) => {
-	const tag = c.req.param("tag");
+const TagList = async ({ tag }: { tag: string }) => {
 	const blogList = await getPostsByTag(tag);
 
-	return c.render(
-		<main>
+	return (
+		<>
 			<h1>Posts tagged with "#{tag}"</h1>
 			<div class="blog-list">
 				{blogList.map((blog) => (
@@ -126,6 +152,20 @@ export const tagListHandler = async (c: Context) => {
 				))}
 			</div>
 			{blogList.length === 0 && <p>No posts found with this tag.</p>}
+		</>
+	);
+};
+
+export const tagListHandler = async (c: Context) => {
+	const tag = c.req.param("tag");
+
+	return c.render(
+		<main>
+			<ErrorBoundary fallback={<div>Error loading posts.</div>}>
+				<Suspense fallback={<div>Loading posts...</div>}>
+					<TagList tag={tag} />
+				</Suspense>
+			</ErrorBoundary>
 		</main>,
 		{
 			title: `Posts tagged #${tag} | tvk.lol`,

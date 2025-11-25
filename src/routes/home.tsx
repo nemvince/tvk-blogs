@@ -1,19 +1,29 @@
 import type { Context } from "hono";
+import { ErrorBoundary, Suspense } from "hono/jsx";
 import { getMarkdownPage, marked } from "../lib/markdown";
 
-export const homeHandler = async (c: Context) => {
+const HomeContent = async () => {
 	const page = await getMarkdownPage("index");
 	const innerHTML = {
 		__html: await marked.parse(page.content),
 	};
 
+	return <article dangerouslySetInnerHTML={innerHTML}></article>;
+};
+
+export const homeHandler = async (c: Context) => {
+	const page = await getMarkdownPage("index");
+
 	return c.render(
 		<main>
-			<article dangerouslySetInnerHTML={innerHTML}></article>
+			<ErrorBoundary fallback={<div>Error loading content.</div>}>
+				<Suspense fallback={<div>Loading...</div>}>
+					<HomeContent />
+				</Suspense>
+			</ErrorBoundary>
 		</main>,
 		{
 			title: page.title,
-			description: page.description,
 		},
 	);
 };

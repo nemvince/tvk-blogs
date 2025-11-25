@@ -13,14 +13,10 @@ import {
 import { homeHandler } from "./routes/home";
 import { webhookHandler } from "./routes/webhook";
 
-// Sync content on startup
-try {
-	console.log("Syncing content...");
-	await syncContent();
-	console.log("Content synced successfully.");
-} catch (e) {
-	console.error("Failed to sync content on startup:", e);
-}
+console.log("Syncing content...");
+// don't catch errors here, let the app crash if syncing fails
+await syncContent();
+console.log("Content synced successfully.");
 
 const app = new Hono();
 
@@ -76,18 +72,21 @@ declare module "hono" {
 
 app.get(
 	"/*",
-	jsxRenderer(({ children, title, description, image, type }) => {
-		return (
-			<Layout
-				title={title as string}
-				description={description as string}
-				image={image as string}
-				type={type as "website" | "article"}
-			>
-				{children}
-			</Layout>
-		);
-	}),
+	jsxRenderer(
+		({ children, title, description, image, type }) => {
+			return (
+				<Layout
+					title={title as string}
+					description={description as string}
+					image={image as string}
+					type={type as "website" | "article"}
+				>
+					{children}
+				</Layout>
+			);
+		},
+		{ stream: true },
+	),
 );
 
 app.get("/", homeHandler);
