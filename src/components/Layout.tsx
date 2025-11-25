@@ -36,6 +36,7 @@ export const Layout: FC<PropsWithChildren<LayoutProps>> = ({
 
 				<link rel="shortcut icon" href="/public/favicon.png" type="image/png" />
 				<link rel="stylesheet" href="/public/styles.css" />
+				<script src="/public/image-zoom.js" defer></script>
 			</head>
 			<body>
 				<header>

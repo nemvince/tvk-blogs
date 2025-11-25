@@ -1,8 +1,13 @@
 {
 	"compilerOptions": {
+		"noEmit": true,
 		"strict": true,
 		"types": ["bun"],
 		"jsx": "react-jsx",
-		"jsxImportSource": "hono/jsx"
+		"jsxImportSource": "hono/jsx",
+		"module": "esnext",
+		"target": "esnext",
+		"moduleResolution": "bundler",
+		"esModuleInterop": true
 	}
 }

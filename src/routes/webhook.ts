@@ -1,5 +1,5 @@
-import type { Context } from "hono";
 import { createHmac, timingSafeEqual } from "node:crypto";
+import type { Context } from "hono";
 import { WEBHOOK_SECRET } from "../lib/constants";
 import { syncContent } from "../lib/sync";
 
@@ -19,10 +19,7 @@ export const webhookHandler = async (c: Context) => {
 	);
 	const checksum = Buffer.from(signature, "utf8");
 
-	if (
-		checksum.length !== digest.length ||
-		!timingSafeEqual(digest, checksum)
-	) {
+	if (checksum.length !== digest.length || !timingSafeEqual(digest, checksum)) {
 		return c.text("Unauthorized", 401);
 	}
 

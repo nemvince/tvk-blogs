@@ -54,6 +54,14 @@ article > blockquote {
 	margin-bottom: 2rem;
 }
 
+p > img {
+	display: block;
+	margin: 1rem auto;
+	/* must be as wide as parent container */
+	max-width: 100%;
+	height: auto;
+}
+
 /* HLJS */
 code .hljs-keyword {
 	color: #8839ef;
@@ -268,7 +276,8 @@ table {
 	margin-bottom: 2rem;
 }
 
-th, td {
+th,
+td {
 	padding: 0.75rem;
 	text-align: left;
 	border-bottom: 1px solid #ccd0da;
@@ -276,4 +285,86 @@ th, td {
 
 tr:nth-child(even) {
 	background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Image Zoom Viewer */
+.image-viewer {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	display: none;
+	align-items: center;
+	justify-content: center;
+}
+
+.image-viewer.active {
+	display: flex;
+}
+
+.image-viewer-backdrop {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.9);
+	cursor: pointer;
+}
+
+.image-viewer-close {
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
+	background: rgba(30, 102, 245, 0.7);
+	border: 2px solid rgba(255, 255, 255, 0.3);
+	color: white;
+	font-size: 2rem;
+	width: 3rem;
+	height: 3rem;
+	border-radius: 50%;
+	cursor: pointer;
+	z-index: 10001;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background-color 0.2s, border-color 0.2s;
+	line-height: 1;
+	padding: 0;
+}
+
+.image-viewer-close:hover {
+	background: rgba(30, 102, 245, 0.9);
+	border-color: rgba(255, 255, 255, 0.5);
+}
+
+.image-viewer-content {
+	position: relative;
+	z-index: 10000;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: visible;
+}
+
+.image-viewer-img {
+	max-width: 100%;
+	max-height: 90vh;
+	object-fit: contain;
+	user-select: none;
+	transition: transform 0.1s ease-out;
+	transform-origin: center;
+}
+
+article img {
+	cursor: zoom-in;
+	transition: opacity 0.2s;
+}
+
+article img:hover {
+	opacity: 0.9;
 }

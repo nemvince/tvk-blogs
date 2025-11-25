@@ -4,10 +4,14 @@ import { HTTPException } from "hono/http-exception";
 import { jsxRenderer } from "hono/jsx-renderer";
 import { ErrorPage } from "./components/ErrorPage";
 import { Layout } from "./components/Layout";
-import { blogListHandler, blogPostHandler, tagListHandler } from "./routes/blog";
+import { syncContent } from "./lib/sync";
+import {
+	blogListHandler,
+	blogPostHandler,
+	tagListHandler,
+} from "./routes/blog";
 import { homeHandler } from "./routes/home";
 import { webhookHandler } from "./routes/webhook";
-import { syncContent } from "./lib/sync";
 
 // Sync content on startup
 try {
@@ -53,6 +57,7 @@ app.onError((e, c) => {
 app.post("/webhook", webhookHandler);
 
 app.use("/public/*", serveStatic({ root: "./" }));
+app.use("/img/*", serveStatic({ root: "./data/" }));
 
 declare module "hono" {
 	interface ContextRenderer {
@@ -93,6 +98,6 @@ app.get("/tags/:tag", tagListHandler);
 Bun.serve({
 	port: 3000,
 	fetch: app.fetch,
-})
+});
 
 console.info("Server is running on http://localhost:3000");

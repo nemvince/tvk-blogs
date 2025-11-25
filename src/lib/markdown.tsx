@@ -1,4 +1,4 @@
-import fs from "node:fs/promises";
+import { access, readdir, readFile } from "node:fs/promises";
 import matter from "gray-matter";
 import hljs from "highlight.js";
 import { HTTPException } from "hono/http-exception";
@@ -10,17 +10,20 @@ export type MarkdownPage = {
 	date: Date;
 	updated: Date;
 	content: string;
-	slug?: string;
-	description?: string;
-	draft?: boolean;
-	tags?: string[];
+};
+
+export type BlogPage = MarkdownPage & {
+	slug: string;
+	description: string;
+	draft: boolean;
+	tags: string[];
 };
 
 export const marked = new Marked(
 	markedHighlight({
 		emptyLangClass: "hljs",
 		langPrefix: "hljs language-",
-		highlight(code, lang) {
+		highlight(code: string, lang: string) {
 			const language = hljs.getLanguage(lang) ? lang : "plaintext";
 			return hljs.highlight(code, { language }).value;
 		},
@@ -34,7 +37,9 @@ const parseDate = (
 ): Date => {
 	if (!dateValue) {
 		if (field !== "updated")
-            console.warn(`No ${field} found in metadata for ${fileName}, using epoch`);
+			console.warn(
+				`No ${field} found in metadata for ${fileName}, using epoch`,
+			);
 		return new Date(0);
 	}
 	if (dateValue instanceof Date) {
@@ -55,8 +60,7 @@ export const getMarkdownPage = async (
 ): Promise<MarkdownPage> => {
 	const filePath = `./data/${fileName}.md`;
 
-	const exists = await fs
-		.access(filePath)
+	const exists = await access(filePath)
 		.then(() => true)
 		.catch(() => false);
 
@@ -66,10 +70,10 @@ export const getMarkdownPage = async (
 		});
 	}
 
-	const fileContent = await fs.readFile(filePath, "utf-8");
+	const fileContent = await readFile(filePath, "utf-8");
 	const { data, content } = matter(fileContent);
 
-    const page = {
+	const page = {
 		slug: fileName.split("/").pop(),
 		title: data.title || "Untitled",
 		content,
@@ -80,15 +84,24 @@ export const getMarkdownPage = async (
 		tags: data.tags,
 	};
 
-	return page 
+	return page;
 };
 
-export const listBlogPages = async () => {
-	const files = await fs.readdir("./data/blog");
+export const getBlogPage = async (
+	slug: string,
+): Promise<BlogPage> => {
+	const page = await getMarkdownPage(`blog/${slug}`);
+	return page as BlogPage;
+};
+
+export const listBlogPages = async (): Promise<BlogPage[]> => {
+	const files = await readdir("./data/blog");
 	const pages = await Promise.all(
 		files
-			.filter((file) => file.endsWith(".md"))
-			.map((file) => getMarkdownPage(`blog/${file.slice(0, -3)}`)),
+			.filter((file: string) => file.endsWith(".md"))
+			.map((file: string) =>
+				getBlogPage(file.slice(0, -3)),
+			),
 	);
 
 	// Filter out drafts and sort by date descending
@@ -102,16 +115,20 @@ export const getPostsByTag = async (tag: string) => {
 	return allPosts.filter((post) => post.tags?.includes(tag));
 };
 
-export const getRelatedPosts = async (currentSlug: string, tags: string[] = []) => {
+export const getRelatedPosts = async (
+	currentSlug: string,
+	tags: string[] = [],
+) => {
 	if (tags.length === 0) return [];
-	
+
 	const allPosts = await listBlogPages();
-	
+
 	return allPosts
 		.filter((post) => post.slug !== currentSlug && !post.draft)
 		.map((post) => ({
 			post,
-			overlap: post.tags?.filter((tag) => tags.includes(tag)).length || 0,
+			overlap:
+				post.tags?.filter((tag: string) => tags.includes(tag)).length || 0,
 		}))
 		.filter((item) => item.overlap > 0)
 		.sort((a, b) => b.overlap - a.overlap)

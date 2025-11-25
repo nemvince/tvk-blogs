@@ -1,6 +1,6 @@
 import type { Context } from "hono";
 import {
-	getMarkdownPage,
+	getBlogPage,
 	getPostsByTag,
 	getRelatedPosts,
 	listBlogPages,
@@ -57,7 +57,7 @@ export const blogListHandler = async (c: Context) => {
 
 export const blogPostHandler = async (c: Context) => {
 	const slug = c.req.param("slug");
-	const page = await getMarkdownPage(`blog/${slug}`);
+	const page = await getBlogPage(slug);
 	const relatedPosts = await getRelatedPosts(slug, page.tags);
 
 	const innerHTML = { __html: await marked.parse(page.content) };
